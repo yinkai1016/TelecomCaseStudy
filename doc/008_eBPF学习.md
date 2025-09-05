@@ -268,14 +268,14 @@ int bpf_cgroup_egress(struct __sk_buff* skb) {}
 #### 3.1.2 函数名
 * `bpf_cgroup_egress`这个随便起
 * 用于用户态通过 libbpf 查找程序
-    * `bpf_object__find_program_by_name(obj, "``bpf_cgroup_egress``")`
+    * `bpf_object__find_program_by_name(obj, "bpf_cgroup_egress")`
 
 ### 3.2 编译
-* `SEC("``cgroupskb/egress/stats``")` 会告诉 clang/LLVM：
+* `SEC("cgroupskb/egress/stats")` 会告诉 clang/LLVM：
     * 这个函数放在 ELF 的 section `"cgroupskb/egress/stats"`里
     * 编译器把 C 代码转成 eBPF bytecode
 * 最终生成 `.o` 文件（ELF 格式），里面有两个重要东西：
-    1. section`"``cgroupskb/egress/stats``"` 
+    1. section`"cgroupskb/egress/stats"`
         * eBPF 程序本体
     2. 符号表
         * 记录函数名`bpf_cgroup_egress`，方便用户态查找
@@ -304,7 +304,7 @@ fd = bpf_prog_load(cs[i].type, name.c_str(), (struct bpf_insn*)cs[i].data.data()
                             log_buf.size());
 ```
 
-  * 会把 ELF section `"``cgroupskb/egress/stats``"` 里的 bytecode 送进内核
+  * 会把 ELF section `"cgroupskb/egress/stats"` 里的 bytecode 送进内核
   * 内核返回program fd
       * 这个 fd 只在当前进程有效，进程退出时 fd 会消失
       * 为了让程序在进程退出后依然存在，内核提供了一个 持久化 机制 bpffs
@@ -376,5 +376,5 @@ BpfLoader::loadAllElfObjects
 |编写|`bpf_cgroup_egress`+`SEC("cgroupskb/egress/stats")`|C 代码 + section 标记|
 |编译|ELF文件|section`"cgroupskb/egress/stats"`，函数符号表|
 |加载|`bpfloader`|`bpf_object__load()` → 内核 program fd|
-|Pin|`/sys/fs/bpf/netd/``prog_netd_cgroupskb_egress_stats`|内核 program fd 对应的文件节点|
+|Pin|`/sys/fs/bpf/netd/prog_netd_cgroupskb_egress_stats`|内核 program fd 对应的文件节点|
 |attach|`attachProgramToCgroup(path, cg_fd, BPF_CGROUP_INET_EGRESS)`|用户态 open path → fd → attach 到 cgroup hook|
